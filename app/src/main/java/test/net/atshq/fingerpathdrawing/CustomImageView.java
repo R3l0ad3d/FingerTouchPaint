@@ -10,18 +10,17 @@ import android.graphics.MaskFilter;
 import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Path;
+import android.support.v7.widget.AppCompatImageView;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.MotionEvent;
-import android.view.View;
 
 import java.util.ArrayList;
-import java.util.List;
 
-public class PaintView extends View {
+public class CustomImageView extends AppCompatImageView {
 
-    public static int BRUSH_SIZE = 10;
+    public static int BRUSH_SIZE = 20;
     public static final int DEFAULT_COLOR = Color.RED;
     public static final int DEFAULT_BG_COLOR = Color.TRANSPARENT;
     private static final float TOUCH_TOLERANCE = 4;
@@ -36,20 +35,18 @@ public class PaintView extends View {
     private boolean blur;
     private MaskFilter mEmboss;
     private MaskFilter mBlur;
-    private static Bitmap mBitmap;
+    private Bitmap mBitmap;
     private Canvas mCanvas;
     private Paint mBitmapPaint = new Paint(Paint.DITHER_FLAG);
 
-    private List<Bitmap> previousBitmap;
-
     private Context mContext;
 
-    public PaintView(Context context) {
+    public CustomImageView(Context context) {
         this(context, null);
         mContext=context;
     }
 
-    public PaintView(Context context, AttributeSet attrs) {
+    public CustomImageView(Context context, AttributeSet attrs) {
         super(context, attrs);
         mPaint = new Paint();
         mPaint.setAntiAlias(true);
@@ -59,16 +56,15 @@ public class PaintView extends View {
         mPaint.setStrokeJoin(Paint.Join.ROUND);
         mPaint.setStrokeCap(Paint.Cap.ROUND);
         mPaint.setXfermode(null);
-        //mPaint.setAlpha(0xff);
+        mPaint.setAlpha(0xff);
 
-        mEmboss = new EmbossMaskFilter(new float[] {1, 1, 1}, 0.4f, 6, 0 );
+        mEmboss = new EmbossMaskFilter(new float[] {1, 1, 1}, 0.4f, 6, 3.5f);
         mBlur = new BlurMaskFilter(5, BlurMaskFilter.Blur.NORMAL);
 
-        previousBitmap = new ArrayList<>();
         mContext=context;
     }
 
-    public void init(DisplayMetrics metrics,Bitmap image) {
+    public void init(DisplayMetrics metrics, Bitmap image) {
         int height = metrics.heightPixels;
         int width = metrics.widthPixels;
 
@@ -80,7 +76,6 @@ public class PaintView extends View {
         }
         Log.d("image Height : ",""+mBitmap.getHeight());
         Log.d("image Width : ",""+mBitmap.getWidth());
-        previousBitmap.add(mBitmap);
         mCanvas = new Canvas(mBitmap);
 
         currentColor = DEFAULT_COLOR;
@@ -109,15 +104,12 @@ public class PaintView extends View {
         invalidate();
     }
 
-
     @Override
     protected void onDraw(Canvas canvas) {
         canvas.save();
-
         mCanvas.drawColor(backgroundColor);
 
         for (FingerPath fp : paths) {
-
             mPaint.setColor(fp.color);
             mPaint.setStrokeWidth(fp.strokeWidth);
             mPaint.setMaskFilter(null);
@@ -136,7 +128,6 @@ public class PaintView extends View {
     }
 
     private void touchStart(float x, float y) {
-        previousBitmap.add(mBitmap); //store bitmap before change
         mPath = new Path();
         FingerPath fp = new FingerPath(currentColor, emboss, blur, strokeWidth, mPath);
         paths.add(fp);
@@ -183,26 +174,6 @@ public class PaintView extends View {
         }
 
         return true;
-    }
-
-    public void UndoPath(){
-
-        if(paths.size()>0&&previousBitmap.size()>0){
-
-            Log.d("Paths Size : ",""+paths.size());
-            Log.d("Bitmap Size : ",""+previousBitmap.size());
-
-            paths.remove(paths.size()-1);
-            mBitmap=previousBitmap.get(previousBitmap.size()-2);
-            mCanvas.setBitmap(mBitmap);
-
-            previousBitmap.remove(previousBitmap.size()-1);
-
-            mPath.reset();
-
-            invalidate();
-        }
-
     }
 
     public Bitmap getmBitmap(){

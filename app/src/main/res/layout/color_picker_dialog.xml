@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:minWidth="250dp"
+    android:minHeight="320dp"
+    android:orientation="vertical"
+    android:background="#c56e6a6a"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingTop="4dp"
+        android:paddingBottom="4dp"
+        android:gravity="center"
+        android:textColor="#ffffff"
+        android:background="#146321"
+        android:text="Color Choose"/>
+
+    <com.rarepebble.colorpicker.ColorPickerView
+        android:id="@+id/colorPicker"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:colorpicker_showAlpha="true"
+        app:colorpicker_showHex="true"
+        app:colorpicker_showPreview="true" />
+    <Button
+        android:id="@+id/btnSelectColor"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="16dp"
+        android:text="Select Color"/>
+
+</LinearLayout>
